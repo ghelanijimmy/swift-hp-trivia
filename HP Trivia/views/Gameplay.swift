@@ -10,6 +10,7 @@ import SwiftUI
 struct Gameplay: View {
     @Environment(\.dismiss) private var dismiss
     @State private var animateViewsIn = false
+    @State private var tappedCorrectAnswer = false
     
     var body: some View {
         GeometryReader { geo in
@@ -41,8 +42,8 @@ struct Gameplay: View {
                             Text("Who is Harry Potter?")
                                 .font(.custom(Constants.hpFont, size: 50))
                                 .multilineTextAlignment(.center)
-                            .padding()
-                            .transition(.scale)
+                                .padding()
+                                .transition(.scale)
                         }
                     }
                     .animation(.easeInOut(duration: 2), value: animateViewsIn)
@@ -109,12 +110,74 @@ struct Gameplay: View {
                 }
                 .foregroundStyle(.white)
                 .frame(width: geo.size.width, height: geo.size.height)
+                
+                //MARK: - CELEBRATION
+                VStack {
+                    Spacer()
+                    
+                    VStack {
+                        if tappedCorrectAnswer {
+                            Text("5")
+                                .font(.largeTitle)
+                                .padding(.top, 50)
+                            .transition(.offset(y: -geo.size.height / 4))
+                        }
+                    }
+                    .animation(.easeInOut(duration: 0.5).delay(2), value: tappedCorrectAnswer)
+                    
+                    Spacer()
+                    
+                    VStack {
+                        if tappedCorrectAnswer {
+                            Text("Brilliant!")
+                                .font(.custom(Constants.hpFont, size: 100))
+                                .transition(.scale.combined(with: .offset(y: -geo.size.height / 2)))
+                        }
+                    }
+                    .animation(.easeInOut(duration: 1).delay(1), value: tappedCorrectAnswer)
+                    
+                    Spacer()
+                    
+                    Text("Answer 1")
+                        .minimumScaleFactor(0.5)
+                        .multilineTextAlignment(.center)
+                        .padding(10)
+                        .frame(width: geo.size.width / 2.15, height: 80)
+                        .background(.green.opacity(0.5))
+                        .clipShape(RoundedRectangle(cornerRadius: 25))
+                        .scaleEffect(2)
+                    
+                    Group {
+                        Spacer()
+                        Spacer()
+                    }
+                    
+                    VStack {
+                        if tappedCorrectAnswer {
+                            Button("Next Level>") {
+                                // TODO: go to next level
+                            }
+                            .buttonStyle(.borderedProminent)
+                            .tint(.blue.opacity(0.5))
+                            .font(.largeTitle)
+                            .transition(.offset(y: geo.size.height / 3))
+                        }
+                    }
+                    .animation(.easeInOut(duration: 2.7).delay(2.7), value: tappedCorrectAnswer)
+                    
+                    Group {
+                        Spacer()
+                        Spacer()
+                    }
+                }
+                .foregroundStyle(.white)
             }
             .frame(width: geo.size.width, height: geo.size.height)
         }
         .ignoresSafeArea()
         .onAppear(perform: {
-            animateViewsIn = true
+            //            animateViewsIn = true
+            tappedCorrectAnswer = true
         })
     }
 }
