@@ -6,8 +6,14 @@
 //
 
 import SwiftUI
+import AVKit
 
 struct ContentView: View {
+    
+    @State private var audioPlayer: AVAudioPlayer!
+    @State private var scalePlayButton = false
+    @State private var moveBackgroundImage = false
+    
     var body: some View {
         GeometryReader { geo in
             ZStack {
@@ -15,6 +21,12 @@ struct ContentView: View {
                     .resizable()
                     .frame(width: geo.size.width * 3, height: geo.size.height)
                     .padding(.top, 3)
+                    .offset(x: moveBackgroundImage ? geo.size.width / 1.1 : -geo.size.width / 1.1)
+                    .onAppear {
+                        withAnimation(.linear(duration: 60).repeatForever()) {
+                            moveBackgroundImage.toggle()
+                        }
+                    }
                 
                 VStack {
                     VStack {
@@ -75,6 +87,12 @@ struct ContentView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 7))
                                 .shadow(radius: 5)
                         }
+                        .scaleEffect(scalePlayButton ? 1.2 : 1)
+                        .onAppear(perform: {
+                            withAnimation(.easeInOut(duration: 1.3).repeatForever()) {
+                                scalePlayButton.toggle()
+                            }
+                        })
                         
                         Spacer()
                         
@@ -97,6 +115,19 @@ struct ContentView: View {
             .frame(width: geo.size.width, height: geo.size.height)
         }
         .ignoresSafeArea()
+        .onAppear(perform: {
+//            playAudio()
+        })
+    }
+    
+    private func playAudio() {
+        let sound = Bundle.main.path(forResource: "magic-in-the-air", ofType: "mp3")
+        
+        audioPlayer = try! AVAudioPlayer(contentsOf: URL(filePath: sound!))
+        
+        audioPlayer.numberOfLoops = -1
+        
+        audioPlayer.play()
     }
 }
 
